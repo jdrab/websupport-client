@@ -1,0 +1,23 @@
+{
+    "name": "jdrab/websupport-rest-client",
+    "description": "Client for websupport.sk REST api",
+    "type": "library",
+    "license": "LGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Ján Dráb",
+            "email": "jan@drab.name"
+        }
+    ],
+    "require": {
+        "php": ">=7.4"
+    },
+    "require-dev": {
+        "phpdocumentor/phpdocumentor": "2.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "jdrab\\WSRest\\Client\\": "src/"
+        }
+    }
+}
