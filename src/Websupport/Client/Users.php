@@ -26,6 +26,7 @@ class Users
     public function __construct(Request $api)
     {
         $this->api = $api;
+        $this->path = '/v1/user';
     }
 
 
@@ -35,12 +36,14 @@ class Users
      *
      * @link https://rest.websupport.sk/docs/v1.user#users
      *
-     * @param  mixed $path
      * @param  mixed $method
+     * @param  mixed $path
      * @return object
      */
-    public function listAll($path = '/v1/user', $method = 'GET'): object
+    public function listAll(string $method = 'GET', string $path): object
     {
+        $path = $path ?? $this->path;
+
         return $this->api->request($method, $path);
     }
 
@@ -50,25 +53,34 @@ class Users
      *
      * get info about currently logged user - https://rest.websupport.sk/v1/user/self
      * @link https://rest.websupport.sk/docs/v1.user#user
-     * @return void
+     * 
+     * @var string $method Supported HTTP Method
+     * @var string $path Endpoint path
+     * @return object
      */
-    public function whoami()
+    public function whoami(string $method = 'GET', string $path): object
     {
-        throw new ClientException('Not implemented');
+        $path = $path ?? join('/', [$this->path, '/self']);
+
+        return $this->api->request($method, $path);
     }
 
 
     /**
      * getUserDetails
      *
-     * @link /**
-     * Whoami
      *
      * @link https://rest.websupport.sk/docs/v1.user#user
+     * 
+     * @var string $method Supported HTTP Method
+     * @var string $path Endpoint path
+     * @return object
      */
-    public function getDetails()
+    public function getUserDetails(int $id, string $method = 'GET', string $path): object
     {
-        throw new ClientException('Not implemented');
+        $path = $path ?? join('/', [$this->path, $id]);
+
+        return $this->api->request($method, $path);
     }
 
     /**
@@ -111,6 +123,7 @@ class Users
     User management resources:
 
         List of all users - done
+        Get info about self - done
         Get a user detail - done
         Create a new user
         Update user

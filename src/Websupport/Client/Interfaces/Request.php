@@ -18,9 +18,9 @@ interface Request
     /**
      * sign
      *
-     * @param  mixed $method
-     * @param  mixed $path
-     * @param  mixed $time
+     * @param  string $method
+     * @param  string $path
+     * @param  int $time
      * @return void
      */
     public function sign(string $method, string $path, int $time);

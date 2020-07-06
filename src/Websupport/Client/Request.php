@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Websupport\Client;
 
 use Websupport\Client\Interfaces\Request as RequestInterface;
+use Websupport\Client\Exception as ClientException;
 
 class Request implements RequestInterface
 {
@@ -18,14 +19,14 @@ class Request implements RequestInterface
     /**
      * entryPoint
      *
-     * @var mixed
+     * @var string
      */
     private $entryPoint;
 
     /**
      * apiKey
      *
-     * @var mixed
+     * @var string
      */
     private $apiKey;
     /**
@@ -38,9 +39,9 @@ class Request implements RequestInterface
     /**
      * __construct
      *
-     * @param  mixed $entryPoint
-     * @param  mixed $key
-     * @param  mixed $secret
+     * @param  string $entryPoint
+     * @param  string $key
+     * @param  string $secret
      * @return void
      */
     public function __construct(string $entryPoint, string $key, string $secret)
@@ -53,10 +54,10 @@ class Request implements RequestInterface
     /**
      * init
      *
-     * @throws ApiException
+     * @throws ClientException
      *
-     * @param  mixed $path
-     * @param  mixed $time
+     * @param string $path Endpoint path
+     * @param int $time unixtimestamp
      * @return void
      */
     public function init(string $path, int $time)
@@ -72,7 +73,7 @@ class Request implements RequestInterface
         ]);
 
         if (!is_resource($ch)) {
-            throw new \ApiException('Invalid cURL resource');
+            throw new ClientException('Invalid cURL resource');
         }
         return $ch;
     }
@@ -80,9 +81,9 @@ class Request implements RequestInterface
     /**
      * sign
      *
-     * @param  mixed $method
-     * @param  mixed $path
-     * @param  mixed $time
+     * @param  string $method Supported HTTP method
+     * @param  string $path Endpoint path
+     * @param  int    $time unixtimestamp
      * @return object
      */
     public function sign(string $method, string $path, int $time): object
