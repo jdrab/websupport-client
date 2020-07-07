@@ -15,6 +15,8 @@ use Websupport\Client\Exception as ClientException;
 class Users
 {
 
+    private int $userId;
+    private int $parentId;
     private $api;
 
     /**
@@ -27,8 +29,29 @@ class Users
     {
         $this->api = $api;
         $this->path = '/v1/user';
+        $this->response = null;
+        $this->userId = 0;
     }
 
+    /**
+     * userId.
+     *
+     * @return	int
+     */
+    public function userId()
+    {
+        return $this->userId;
+    }
+
+    /**
+     * parentId
+     *
+     * @return	int
+     */
+    public function parentId()
+    {
+        return $this->parentId;
+    }
 
 
     /**
@@ -40,13 +63,30 @@ class Users
      * @param  mixed $path
      * @return object
      */
-    public function listAll(string $method = 'GET', string $path): object
+    public function listAll(string $method = 'GET', string $path = null): object
     {
         $path = $path ?? $this->path;
 
         return $this->api->request($method, $path);
     }
 
+    /**
+     * setUserId.
+     *
+     * @access	public
+     * @param	int	$id	
+     * @return	void
+     */
+    public function setUserId(int $id)
+    {
+        $this->userId = $id;
+        return $this;
+    }
+
+    public function setParentId(int $parentId): void
+    {
+        $this->parentId = $parentId;
+    }
 
     /**
      * Whoami
@@ -58,16 +98,21 @@ class Users
      * @var string $path Endpoint path
      * @return object
      */
-    public function whoami(string $method = 'GET', string $path): object
+    public function whoami(string $method = 'GET', string $path = null): object
     {
-        $path = $path ?? join('/', [$this->path, '/self']);
+        $path = $path ?? join('/', [$this->path, 'self']);
+        $resp = $this->api->request($method, $path);
 
-        return $this->api->request($method, $path);
+        $data = json_decode($resp->response());
+
+        $this->setUserId($data->id);
+        $this->setParentId($data->parentId);
+        return $resp;
     }
 
 
     /**
-     * getUserDetails
+     * userDetails
      *
      *
      * @link https://rest.websupport.sk/docs/v1.user#user
@@ -76,7 +121,7 @@ class Users
      * @var string $path Endpoint path
      * @return object
      */
-    public function getUserDetails(int $id, string $method = 'GET', string $path): object
+    public function userDetails(int $id, string $method = 'GET', string $path = null): object
     {
         $path = $path ?? join('/', [$this->path, $id]);
 

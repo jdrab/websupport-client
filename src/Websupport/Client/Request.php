@@ -4,17 +4,32 @@ declare(strict_types=1);
 
 namespace Websupport\Client;
 
+use SplObserver;
+use SplSubject;
 use Websupport\Client\Interfaces\Request as RequestInterface;
 use Websupport\Client\Exception as ClientException;
 
-class Request implements RequestInterface
+class Request implements SplSubject, RequestInterface
 {
     /**
-     * response
-     *
-     * @var mixed
+     * 
+     * @var string
      */
-    public $response;
+    private string $response;
+
+    /**
+     * Hashing algorithm used by hash_hmac
+     * 
+     * @var	string	$hmacAlgo
+     */
+    private string $hmacAlgo;
+
+    /**
+     * Reseponse code from request
+     * 
+     * @var	string	$statusCode
+     */
+    private int $statusCode;
 
     /**
      * entryPoint
@@ -49,6 +64,7 @@ class Request implements RequestInterface
         $this->entryPoint = $entryPoint;
         $this->apiKey = $key;
         $this->secret = $secret;
+        $this->hmacAlgo = 'sha1';
     }
 
     /**
@@ -63,7 +79,7 @@ class Request implements RequestInterface
     public function init(string $path, int $time)
     {
         $ch = curl_init();
-        $ch = curl_init();
+
         curl_setopt($ch, CURLOPT_URL, sprintf('%s:%s', $this->entryPoint, $path));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
@@ -78,8 +94,21 @@ class Request implements RequestInterface
         return $ch;
     }
 
+
+    public function attach(SplObserver $observer)
+    {
+    }
+    public function detach(SplObserver $observer)
+    {
+    }
+    public function notify()
+    {
+    }
+
     /**
      * sign
+     * 
+     * Create request hmac signature request - method,path and time
      *
      * @param  string $method Supported HTTP method
      * @param  string $path Endpoint path
@@ -89,18 +118,32 @@ class Request implements RequestInterface
     public function sign(string $method, string $path, int $time): object
     {
         $canonicalRequest = sprintf('%s %s %s', $method, $path, $time);
-        $this->signature        = hash_hmac('sha1', $canonicalRequest, $this->secret);
+        $this->signature        = hash_hmac($this->hmacAlgo, $canonicalRequest, $this->secret);
         return $this;
     }
 
     /**
      * response
      *
-     * @return string
+     * @return string response body
      */
     public function response(): string
     {
-        return $this->response;
+        $resp = $this->response;
+
+        unset($this->response);
+
+        return $resp;
+    }
+
+    /**
+     * statusCode
+     *
+     * @return string HTTP Status code from request
+     */
+    public function statusCode(): int
+    {
+        return $this->statusCode;
     }
 
     /**
@@ -133,12 +176,14 @@ class Request implements RequestInterface
      * @param  mixed $path
      * @return object
      */
-    public function request($method, $path): object
+    public function request($method, $path)
     {
         $time = time();
         $this->sign($method, $path, $time);
         $res = $this->init($path, $time);
+
         $this->exec($res);
+        $this->statusCode = curl_getinfo($res, CURLINFO_HTTP_CODE);
         $this->close($res);
         return $this;
     }
