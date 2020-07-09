@@ -6,6 +6,7 @@ namespace Websupport\Client;
 
 use SplObserver;
 use SplSubject;
+
 use Websupport\Client\Interfaces\Request as RequestInterface;
 use Websupport\Client\Exception as ClientException;
 
@@ -81,12 +82,15 @@ class Request implements SplSubject, RequestInterface
         $ch = curl_init();
 
         curl_setopt($ch, CURLOPT_URL, sprintf('%s:%s', $this->entryPoint, $path));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($ch, CURLOPT_USERPWD, $this->apiKey . ':' . $this->signature);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Date: ' . gmdate('Y-m-d\TH:i:s\Z', $time),
+            'Content-Type: application/json',
         ]);
+        curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+        curl_setopt($ch, CURLOPT_VERBOSE, true);
 
         if (!is_resource($ch)) {
             throw new ClientException('Invalid cURL resource');
@@ -115,10 +119,11 @@ class Request implements SplSubject, RequestInterface
      * @param  int    $time unixtimestamp
      * @return object
      */
-    public function sign(string $method, string $path, int $time): object
+    public function sign(string $method, string $path, int $time, array $data = []): object
     {
+
         $canonicalRequest = sprintf('%s %s %s', $method, $path, $time);
-        $this->signature        = hash_hmac($this->hmacAlgo, $canonicalRequest, $this->secret);
+        $this->signature  = hash_hmac($this->hmacAlgo, $canonicalRequest, $this->secret);
         return $this;
     }
 
@@ -135,6 +140,12 @@ class Request implements SplSubject, RequestInterface
 
         return $resp;
     }
+
+    public function prettyResponse(): string
+    {
+        return json_encode(json_decode($this->response()), JSON_PRETTY_PRINT);
+    }
+
 
     /**
      * statusCode
@@ -176,15 +187,32 @@ class Request implements SplSubject, RequestInterface
      * @param  mixed $path
      * @return object
      */
-    public function request($method, $path)
+    public function request($method, $path, array $data = [])
     {
         $time = time();
-        $this->sign($method, $path, $time);
+        $this->sign($method, $path, $time); //, $data);
+
         $res = $this->init($path, $time);
 
+        if ($data) {
+            curl_setopt($res, CURLOPT_POST, 1);
+            curl_setopt($res, CURLOPT_POSTFIELDS, json_encode($data));
+        }
+
+
         $this->exec($res);
-        $this->statusCode = curl_getinfo($res, CURLINFO_HTTP_CODE);
+
+        $info = curl_getinfo($res);
+        $this->statusCode = $info['http_code'];
+        $this->debugInfo = $info;
+
+
         $this->close($res);
         return $this;
+    }
+
+    public function debugInfo()
+    {
+        return $this->debugInfo;
     }
 }

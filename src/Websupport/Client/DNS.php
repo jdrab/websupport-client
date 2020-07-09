@@ -14,95 +14,37 @@ use Websupport\Client\Exception as ClientException;
  */
 class DNS
 {
-    public function __construct(Request $api, int $id)
+    /**
+     * @var		mixed	$userid int or 'self'
+     */
+    private $userId;
+    private $domainName;
+
+    public function __construct(Request $api, string $domainName = null, ?int $userId = null)
     {
         $this->api = $api;
-        $this->path = join('/', ['/v1/user', $id]);
+        $this->userId = $userId ?? 'self';
+        $this->domainName = $domainName;
         $this->response = null;
     }
 
     /**
-     * @link http://rest.websupport.sk/docs/v1.zone#zones
+     * userId.
      *
-     * @return void
+     * @return	mixed int|string
      */
-    public function listZones()
+    public function userId()
     {
-        throw new ClientException('Not implemented');
+        return $this->userId;
     }
 
     /**
-     * @link http://rest.websupport.sk/docs/v1.zone#zone
+     * domainName.
      *
-     * @return void
+     * @return	string
      */
-    public function zoneDetails()
+    public function domainName(): string
     {
-        throw new ClientException('Not implemented');
-    }
-
-    /**
-     * @link http://rest.websupport.sk/docs/v1.zone#records
-     *
-     * @return void
-     */
-    public function listRecords()
-    {
-        throw new ClientException('Not implemented');
-    }
-
-    /**
-     * @link http://rest.websupport.sk/docs/v1.zone#record
-     *
-     * @return void
-     */
-    public function recordDetails()
-    {
-        throw new ClientException('Not implemented');
-    }
-
-    /**
-     * @link http://rest.websupport.sk/docs/v1.zone#post-record
-     *
-     * @return void
-     */
-    public function addRecord()
-    {
-        throw new ClientException('Not implemented');
-    }
-
-    /**
-     * @link http://rest.websupport.sk/docs/v1.zone#put-record
-     *
-     * @return void
-     */
-    public function updateRecord()
-    {
-        throw new ClientException('Not implemented');
-    }
-
-    /**
-     * @link http://rest.websupport.sk/docs/v1.zone#delete-record
-     *
-     * @return void
-     */
-    public function deleteRecord()
-    {
-        throw new ClientException('Not implemented');
+        return $this->domainName;
     }
 }
-
-/*
-DNS zone management resources:
-
- List of all zones
- Get a zone detail
- 
-Record management resources:
-
- List of all records
- Get a record detail
- Create a new record
- Update a record
- Delete a record
-*/

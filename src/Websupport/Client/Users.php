@@ -59,15 +59,14 @@ class Users
      *
      * @link https://rest.websupport.sk/docs/v1.user#users
      *
+     * @todo optional parameters 'page' and 'pagesize' are not implemented
      * @param  mixed $method
      * @param  mixed $path
      * @return object
      */
-    public function listAll(string $method = 'GET', string $path = null): object
+    public function listAll(string $method = 'GET'): object
     {
-        $path = $path ?? $this->path;
-
-        return $this->api->request($method, $path);
+        return $this->api->request($method, $this->path);
     }
 
     /**
@@ -77,15 +76,16 @@ class Users
      * @param	int	$id	
      * @return	void
      */
-    public function setUserId(int $id)
+    public function setUserId(int $id): object
     {
         $this->userId = $id;
         return $this;
     }
 
-    public function setParentId(int $parentId): void
+    public function setParentId(int $parentId): object
     {
         $this->parentId = $parentId;
+        return $this;
     }
 
     /**
@@ -98,15 +98,18 @@ class Users
      * @var string $path Endpoint path
      * @return object
      */
-    public function whoami(string $method = 'GET', string $path = null): object
+    public function whoami(string $method = 'GET'): object
     {
-        $path = $path ?? join('/', [$this->path, 'self']);
+        $path = join('/', [$this->path, 'self']);
         $resp = $this->api->request($method, $path);
 
         $data = json_decode($resp->response());
 
         $this->setUserId($data->id);
-        $this->setParentId($data->parentId);
+        if (!is_null($data->parentId)) {
+            $this->setParentId($data->parentId);
+        }
+
         return $resp;
     }
 
@@ -121,7 +124,7 @@ class Users
      * @var string $path Endpoint path
      * @return object
      */
-    public function userDetails(int $id, string $method = 'GET', string $path = null): object
+    public function userDetails(int $id, string $method = 'GET'): object
     {
         $path = $path ?? join('/', [$this->path, $id]);
 

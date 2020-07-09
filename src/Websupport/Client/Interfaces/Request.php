@@ -23,7 +23,7 @@ interface Request
      * @param  int $time
      * @return void
      */
-    public function sign(string $method, string $path, int $time);
+    public function sign(string $method, string $path, int $time, array $data = []);
 
     /**
      * prepareRequest
