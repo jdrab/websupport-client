@@ -16,33 +16,48 @@ usage:
 // create a record
 $restUrl = "https://rest.websupport.sk";
 $ws = new \Websupport\Client\Request($restUrl, $apiKey, $secret);
- $dns = new \Websupport\Client\DNS($ws, $domainName);
- $records = new \Websupport\Client\DNS\Records(
+$dns = new \Websupport\Client\DNS($ws, $domainName);
+
+$records = new \Websupport\Client\DNS\Records(
     $dns,
-    new \Websupport\Client\DNS\ARecord(['name' => 'hostname', 'content' => $ip])
-     );
+    new \Websupport\Client\DNS\ARecord([
+        'name' => $hostname, 
+        'content' => $ip
+    ])
+);
+
 $res = $records->validate()->create();
 
-echo $res->jsonResponse();
+echo $res->jsonResponse(); // or response()
 ~~~
 
 ~~~php
 // update record
+$restUrl = "https://rest.websupport.sk";
+$ws = new \Websupport\Client\Request($restUrl, $apiKey, $secret);
 $dns = new \Websupport\Client\DNS($ws, $domainName);
+
 $record = new \Websupport\Client\DNS\Records(
     $dns,
-    new \Websupport\Client\DNS\ARecord(['name' => 'newhostnamevalue', 'content' => 'ip.ad.dr.re.ss'])
+    new \Websupport\Client\DNS\ARecord([
+        'name' => $hostname, 
+        'content' => 'ip.ad.dr.re.ss'
+    ])
 );
 
 $update = $record->validate()->update($recordIdNotHostname);
 
-echo $update->jsonResponse();
+echo $update->jsonResponse(); // or response()
 ~~~
 
 ~~~php
+$restUrl = "https://rest.websupport.sk";
+$ws = new \Websupport\Client\Request($restUrl, $apiKey, $secret);
 $dns = new \Websupport\Client\DNS($ws, $domainName);
-$record = new \Websupport\Client\DNS\Records(
-    $dns
-);
+
+$record = new \Websupport\Client\DNS\Records($dns);
+
 $delete = $record->delete($recordIIdNotHostname);
+
+echo $delete->jsonResponse(); // or response()
 ~~~
