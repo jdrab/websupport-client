@@ -7,7 +7,7 @@ namespace Websupport\Client\DNS;
 use Websupport\Client\Request;
 
 /**
- * Users
+ * Zones
  *
  * @link http://rest.websupport.sk/docs/v1.zone#zone
  */
@@ -29,15 +29,15 @@ class Zones
     }
 
     /**
-     * Note from docs: if you don't know user ID of currently logged user,
-     * you can use string "self", i.e.: path will be "/v1/user/self/zone"
-     * @todo optional parameters 'page' and 'pagesize' are not implemented
+     * listAll
+     * 
+     * List all domain zones     
      *
      * @access	public
      * @param	string	$method	Default: 'GET'
-     * @return	mixed
+     * @return	object
      */
-    public function listZones(string $method = 'GET'): object
+    public function listAll(string $method = 'GET'): object
     {
         $path = $path ?? $this->path;
 
@@ -45,14 +45,15 @@ class Zones
     }
 
     /**
+     * details.
+     * 
      * @link http://rest.websupport.sk/docs/v1.zone#zone
      *
-     * Note from docs: if you don't know user ID of currently logged user,
-     * you can use string "self", i.e.: path will be "/v1/user/self/zone/:domain_name"
-     *
-     * @return void
+     * @param	string	$domainName	Default: null
+     * @param	string	$method    	Default: 'GET'
+     * @return	object
      */
-    public function zoneDetails(string $domainName = null, string $method = 'GET'): object
+    public function details(string $domainName = null, string $method = 'GET'): object
     {
         $domainName = $doaminName ?? $this->domainName;
         $path = join('/', [$this->path, $domainName]);
@@ -64,14 +65,7 @@ class Zones
 /*
 DNS zone management resources:
 
- List of all zones
- Get a zone detail
+ [x] List of all zones
+ [x] Get a zone detail
  
-Record management resources: - v DNS\Records
-
- List of all records
- Get a record detail
- Create a new record
- Update a record
- Delete a record
 */

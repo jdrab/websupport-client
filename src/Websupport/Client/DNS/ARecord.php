@@ -8,36 +8,71 @@ use Websupport\Client\DNS\GenericRecord;
 
 class ARecord extends GenericRecord
 {
-    private array $reqProp = ['type' => 'string', 'name' => 'string', 'content' => 'string'];
+    /**
+     * @var		array	$defaultProp
+     */
+    private array $defaultProp = ['type' => 'A'];
+
+    /**
+     * @var	    array	$reqProp Required type(dns) properties
+     * @link    https://rest.websupport.sk/docs/v1.zone#post-record
+     */
+    private array $reqProp = ['name' => 'string', 'content' => 'string'];
+
+    /**
+     * @var		array	$optProp Optional properties
+     * @link    https://rest.websupport.sk/docs/v1.zone#post-record
+     */
+
     private array $optProp = ['ttl' => 'int'];
+
+    /**
+     * @var		array	$properties merged defautl and user provided properties
+     */
     private array $properties;
 
     public function __construct($properties)
     {
-        $this->properties = $properties;
+        // default properties must override user provided properties - eg: type
+        $this->properties = array_merge($properties, $this->defaultProp);
         return $this;
     }
 
-    public function path()
-    {
-        return $this->path;
-    }
-
-    public function properties()
-    {
-        return $this->properties;
-    }
-    public function validate()
+    /**
+     * properties.
+     *
+     * @return	array
+     */
+    public function properties(): array
     {
         return $this->properties;
     }
+    /**
+     * validate.
+     *
+     * @return	array
+     */
+    public function validate(): array
+    {
+        return $this->properties;
+    }
 
-    public function requiredProperties()
+    /**
+     * requiredProperties.
+     *
+     * @return	array
+     */
+    public function requiredProperties(): array
     {
         return $this->reqProp;
     }
 
-    public function optionalProperties()
+    /**
+     * optionalProperties.
+     *
+     * @return	array
+     */
+    public function optionalProperties(): array
     {
         return $this->optProp;
     }

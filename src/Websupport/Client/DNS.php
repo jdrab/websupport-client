@@ -5,19 +5,28 @@ declare(strict_types=1);
 namespace Websupport\Client;
 
 use Websupport\Client\Request;
-use Websupport\Client\Exception as ClientException;
 
 /**
- * Users
+ * DNS - core object for DNS requests
  *
- * @link https://rest.websupport.sk/docs/v1.user
+ * @link https://rest.websupport.sk/docs/v1.zone
  */
 class DNS
 {
     /**
-     * @var		mixed	$userid int or 'self'
+     * userId
+     * 
+     * According do documentation it might be set to int
+     * or string 'self' if one does not know userId for requests.
+     * In constructor is set to 'self' if it's not provided
+     * 
+     * @var		mixed	$userid int or 'self' Default:'null';
      */
     private $userId;
+
+    /**
+     * @var		mixed	$domainName
+     */
     private $domainName;
 
     public function __construct(Request $api, string $domainName = null, ?int $userId = null)
@@ -39,7 +48,7 @@ class DNS
     }
 
     /**
-     * domainName.
+     * domainName
      *
      * @return	string
      */

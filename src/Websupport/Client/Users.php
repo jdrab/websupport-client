@@ -31,6 +31,8 @@ class Users
         $this->path = '/v1/user';
         $this->response = null;
         $this->userId = 0;
+
+        return $this;
     }
 
     /**
@@ -38,7 +40,7 @@ class Users
      *
      * @return	int
      */
-    public function userId()
+    public function userId(): int
     {
         return $this->userId;
     }
@@ -48,7 +50,7 @@ class Users
      *
      * @return	int
      */
-    public function parentId()
+    public function parentId(): int
     {
         return $this->parentId;
     }
@@ -72,9 +74,8 @@ class Users
     /**
      * setUserId.
      *
-     * @access	public
      * @param	int	$id	
-     * @return	void
+     * @return	object
      */
     public function setUserId(int $id): object
     {
@@ -82,6 +83,12 @@ class Users
         return $this;
     }
 
+    /**
+     * setParentId.
+     *
+     * @param	int	$parentId
+     * @return	object
+     */
     public function setParentId(int $parentId): object
     {
         $this->parentId = $parentId;
@@ -95,7 +102,6 @@ class Users
      * @link https://rest.websupport.sk/docs/v1.user#user
      * 
      * @var string $method Supported HTTP Method
-     * @var string $path Endpoint path
      * @return object
      */
     public function whoami(string $method = 'GET'): object
@@ -115,16 +121,13 @@ class Users
 
 
     /**
-     * userDetails
+     * details
      *
-     *
-     * @link https://rest.websupport.sk/docs/v1.user#user
-     * 
-     * @var string $method Supported HTTP Method
-     * @var string $path Endpoint path
-     * @return object
+     * @param	int   	$id userId
+     * @param	string	$method	HTTP method Default: 'GET'
+     * @return	object
      */
-    public function userDetails(int $id, string $method = 'GET'): object
+    public function details(int $id, string $method = 'GET'): object
     {
         $path = $path ?? join('/', [$this->path, $id]);
 
@@ -170,28 +173,28 @@ class Users
     /*
     User management resources:
 
-        List of all users - done
-        Get info about self - done
-        Get a user detail - done
-        Create a new user
-        Update user
-        Password reset
+        [x] List of all users
+        [x] Get info about self
+        [x] Get a user detail
+        [ ] Create a new user
+        [ ] Update user
+        [ ] Password reset
 
-    Billing profile management resources:
+    Billing profile management resources: - separate class
 
-        List of all billing profiles
-        Get a billing profile detail
-        Create a new billing profile
-        Update billing profile
-        Delete billing profile
+        [ ] List of all billing profiles
+        [ ] Get a billing profile detail
+        [ ] Create a new billing profile
+        [ ] Update billing profile
+        [ ] Delete billing profile
 
-    Domain profile management resources:
+    Domain profile management resources: - separate class
 
-        List of all domain profiles
-        Get a domain profile
-        Create new domain profile
-        Update domain profile
-        Delete domain profile
+        [ ] List of all domain profiles
+        [ ] Get a domain profile
+        [ ] Create new domain profile
+        [ ] Update domain profile
+        [ ] Delete domain profile
 
      */
 }

@@ -87,7 +87,7 @@ class Records implements RecordsInterface
      * @access	public
      * @return	string
      */
-    public function create(): string
+    public function create(): object
     {
 
         $path = join(
@@ -102,7 +102,7 @@ class Records implements RecordsInterface
             'POST',
             $path,
             $this->record->properties()
-        )->response();
+        );
     }
 
 
@@ -115,7 +115,7 @@ class Records implements RecordsInterface
      * @param	int	    $recordId - must be id, not a name, ws docs are missleading
      * @return	string
      */
-    public function update(int $recordId): string
+    public function update(int $recordId): object
     {
 
         $path = join(
@@ -154,9 +154,9 @@ class Records implements RecordsInterface
      * 
      * @access	public
      * @param	int	$recordId	
-     * @return	string
+     * @return	object
      */
-    public function delete(int $recordId): string
+    public function delete(int $recordId): object
     {
 
 
@@ -178,8 +178,6 @@ class Records implements RecordsInterface
             $this->record->properties()
         );
     }
-
-
 
     /**
      * listAll
@@ -255,3 +253,13 @@ class Records implements RecordsInterface
         return $this->dns->api->request($method, $path);
     }
 }
+
+/*
+Record management resources: - DNS\Records
+
+ [x] List of all records
+ [x] Get a record detail
+ [x] Create a new record
+ [x] Update a record
+ [x] Delete a record
+*/

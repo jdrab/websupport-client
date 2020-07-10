@@ -8,32 +8,20 @@ use Websupport\Client\Interfaces\Record as RecordInterface;
 
 class GenericRecord implements RecordInterface
 {
-    # keys are used for validation, values will be used later
-    // private array $pathProp = []
-    private array $reqProp = []; //'type' => 'string', 'name' => 'string', 'content' => 'string'];
-    private array $optProp = []; //'ttl' => 'int'];
+    private array $defaultProp = [];
+    private array $reqProp = [];
+    private array $optProp = [];
     private array $properties;
 
     public function __construct($properties)
     {
-        $this->properties = $properties;
-        // $this->path = null;//'/v1/user/', $this->userId, 'zone', $this->domainName, 'record'];
-        // :id/zone/:domain_name/record
-    }
-
-    public function path()
-    {
-        return $this->path;
+        $this->properties = array_merge($properties, $this->defaultProp);
     }
 
     public function properties()
     {
         return $this->properties;
     }
-    // public function validate()
-    // {
-    //     return $this->properties;
-    // }
 
     public function requiredProperties()
     {

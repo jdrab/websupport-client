@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Websupport\Client;
 
-use SplObserver;
-use SplSubject;
+// use SplObserver;
+// use SplSubject;
 
 use Websupport\Client\Interfaces\Request as RequestInterface;
 use Websupport\Client\Exception as ClientException;
 
-class Request implements SplSubject, RequestInterface
+class Request implements RequestInterface //SplSubject,
 {
     /**
      * 
@@ -75,7 +75,8 @@ class Request implements SplSubject, RequestInterface
      *
      * @param string $path Endpoint path
      * @param int $time unixtimestamp
-     * @return void
+     * 
+     * @return mixed cURL resource
      */
     public function init(string $path, int $time)
     {
@@ -99,29 +100,21 @@ class Request implements SplSubject, RequestInterface
     }
 
 
-    public function attach(SplObserver $observer)
-    {
-    }
-    public function detach(SplObserver $observer)
-    {
-    }
-    public function notify()
-    {
-    }
-
     /**
      * sign
      * 
      * Create request hmac signature request - method,path and time
+     * 
+     * WARNING: websupport api does not use body data while generating hmac signature
      *
      * @param  string $method Supported HTTP method
      * @param  string $path Endpoint path
      * @param  int    $time unixtimestamp
+     * @param  array  $data are not required - see WARNING above
      * @return object
      */
     public function sign(string $method, string $path, int $time, array $data = []): object
     {
-
         $canonicalRequest = sprintf('%s %s %s', $method, $path, $time);
         $this->signature  = hash_hmac($this->hmacAlgo, $canonicalRequest, $this->secret);
         return $this;
@@ -134,14 +127,14 @@ class Request implements SplSubject, RequestInterface
      */
     public function response(): string
     {
-        $resp = $this->response;
+        $str = $this->response;
 
         unset($this->response);
 
-        return $resp;
+        return $str;
     }
 
-    public function prettyResponse(): string
+    public function jsonResponse(): string
     {
         return json_encode(json_decode($this->response()), JSON_PRETTY_PRINT);
     }
@@ -150,7 +143,7 @@ class Request implements SplSubject, RequestInterface
     /**
      * statusCode
      *
-     * @return string HTTP Status code from request
+     * @return int statusCode HTTP Status code from request
      */
     public function statusCode(): int
     {
@@ -183,16 +176,20 @@ class Request implements SplSubject, RequestInterface
     /**
      * request
      *
-     * @param  mixed $method
-     * @param  mixed $path
+     * @param  string $method
+     * @param  string $path
+     * @param  array  $data
+     * 
      * @return object
      */
-    public function request($method, $path, array $data = [])
+    public function request(string $method, string $path, array $data = []): object
     {
         $time = time();
         $this->sign($method, $path, $time); //, $data);
 
         $res = $this->init($path, $time);
+
+        curl_setopt($res, CURLOPT_CUSTOMREQUEST, $method);
 
         if ($data) {
             curl_setopt($res, CURLOPT_POST, 1);
@@ -205,14 +202,31 @@ class Request implements SplSubject, RequestInterface
         $info = curl_getinfo($res);
         $this->statusCode = $info['http_code'];
         $this->debugInfo = $info;
-
+        $this->debugInfo['data'] = $data;
 
         $this->close($res);
         return $this;
     }
 
-    public function debugInfo()
+    /**
+     * Debug info from curl request
+     *
+     * most helpful are 'request_header' and 'data';
+     * 
+     * @return array 
+     */
+    public function debugInfo(): array
     {
         return $this->debugInfo;
     }
+
+    // public function attach(SplObserver $observer)
+    // {
+    // }
+    // public function detach(SplObserver $observer)
+    // {
+    // }
+    // public function notify()
+    // {
+    // }
 }
