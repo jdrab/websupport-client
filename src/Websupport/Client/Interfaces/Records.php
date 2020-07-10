@@ -8,4 +8,7 @@ interface Records
 {
     public function validate();
     public function create();
+    public function update(int $id);
+    public function listAll();
+    public function delete(int $id);
 }
