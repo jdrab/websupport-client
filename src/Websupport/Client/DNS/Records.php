@@ -78,7 +78,7 @@ class Records implements RecordsInterface
      * $dns = new \Websupport\Client\DNS($ws, $domainName);
      * $records = new \Websupport\Client\DNS\Records(
      *     $dns,
-     *     new \Websupport\Client\DNS\ARecord(['name' => 'work2', 'content' => $somiIp])
+     *     new \Websupport\Client\DNS\ARecord(['name' => 'work2', 'content' => $ip])
      * );
      * 
      * $x = $records->validate()->create();
@@ -93,8 +93,11 @@ class Records implements RecordsInterface
         $path = join(
             '',
             [
-                '/v1/user/', $this->dns->userId(),
-                '/zone/', $this->dns->domainName(), '/record'
+                '/v1/user/',
+                $this->dns->userId(),
+                '/zone/',
+                $this->dns->domainName(),
+                '/record'
             ]
         );
 
@@ -191,7 +194,9 @@ class Records implements RecordsInterface
      * $records = new \Websupport\Client\DNS\Records($dns);
      * echo "listRecords:" . $records->listAll()->response();
      * </code>
+     * 
      * or
+     * 
      * <code>
      * $restUrl = "https://rest.websupport.sk";
      * $ws = new \Websupport\Client\Request($restUrl, $apiKey, $secret);
