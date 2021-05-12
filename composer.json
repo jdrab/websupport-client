@@ -10,10 +10,10 @@
         }
     ],
     "require": {
-        "php": ">=7.4"
+        "php": ">=7.4",
+        "phpdocumentor/phpdocumentor": "2.*"
     },
     "require-dev": {
-        "phpdocumentor/phpdocumentor": "2.*"
     },
     "autoload": {
         "psr-4": {
