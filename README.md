@@ -1,8 +1,7 @@
 # websupport.sk rest api - client
 
-**first warning**
-for some odd reason websupport api does not use the full payload
-to generate the hash eg:
+**1st Warning** - for some odd reason websupport api does not use the full payload
+to generate the signature eg:
 
 ```php
 # https://rest.websupport.sk/docs/v1.intro
@@ -15,7 +14,7 @@ $signature = hash_hmac('sha1', $canonicalRequest, $secret);
 keep in mind that potential attacker may be able to change your payload "on the fly" without actually making the hmac invalid for your request. Attacker must be able to forge an valid https certificate, which is not easy but..
 
 
-**second warning ;)**: only some functionality is implemented 
+**Notice**: only some functionality is implemented 
 
 - DNS management - done
 - User management - bare minimum needed for DNS management 
